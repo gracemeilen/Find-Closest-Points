@@ -1,0 +1,145 @@
+import java.util.ArrayList;
+
+public class ClosestPairDC {
+
+	public final static double INF = java.lang.Double.POSITIVE_INFINITY;
+	static double globalDistance = INF; //Tracks smallest distance seen by program so far
+	static XYPoint pointOne; //stores one point associated with smallest distance
+	static XYPoint pointTwo; // stores the other point associated with smallest distance.
+
+
+	//
+	// findClosestPair()
+	//
+	// Given a collection of nPoints points, find and ***print***
+	//  * the closest pair of points
+	//  * the distance between them
+	// in the form "(x1, y1) (x2, y2) distance"
+	//
+
+	// INPUTS:
+	//  - points sorted in nondecreasing order by X coordinate
+	//  - points sorted in nondecreasing order by Y coordinate
+	//
+
+
+	public static void findClosestPair(XYPoint pointsByX[], 
+			XYPoint pointsByY[])
+	{
+		globalDistance = pairDistance(pointsByX, pointsByY); // calls helper method which recurses if necessary 
+		if(pointOne.isLeftOf(pointTwo)){
+			System.out.println(pointOne.toString() + "  " + pointTwo.toString()  +  "  " + globalDistance);
+		}
+		else{
+			System.out.println(pointTwo.toString() + "  " + pointOne.toString()  +  "  " + globalDistance);
+		}
+
+
+		//
+		// Replace the following with your divide-and-conquer code.
+		//
+	}
+	public static double pairDistance(XYPoint pointsByX[], 
+			XYPoint pointsByY[]){
+		int nPoints = pointsByX.length;
+		if (nPoints < 2){
+			return INF;
+		}
+		if (nPoints == 2){
+			double dist = pointsByX[0].dist(pointsByX[1]);
+			if(dist < globalDistance){ //if this is the smallest distance seen yet, updates global variables
+				globalDistance = dist;
+				pointOne = pointsByX[0];
+				pointTwo = pointsByX[1];
+			}
+			return dist;
+		}
+
+		else {
+			int mid = (nPoints/2);
+			XYPoint[] XL = new XYPoint[mid];
+			XYPoint[] XR = new XYPoint[nPoints - mid];
+			// separating pointsByX into two different arrays, one holding
+			// the left set of points and one holding the right
+			for (int k = 0; k < nPoints; k++){
+				if (k<mid){
+					XL[k] = pointsByX[k];
+				}
+				else {
+					XR[k - mid] = pointsByX[k];
+				}
+			}
+			XYPoint[] YL = new XYPoint[mid];
+			XYPoint[] YR = new XYPoint[nPoints - mid];
+			int counterOne  = 0;
+			int counterTwo = 0;
+
+			// separates pointsByY into 2 arrays that contain the same points as
+			// their X counter-arrays. XL and YL have the same points for example. They
+			// are just organized differently. 
+			for (int j = 0; j < nPoints; j++){
+				if (pointsByY[j].isLeftOf(pointsByX[mid])){
+					YL[counterOne] = pointsByY[j];
+					counterOne++;
+				}
+				else {
+					YR[counterTwo] = pointsByY[j];
+					counterTwo++;
+				}
+			}
+			// recusive calls on both sides of the points, those on the left half
+			// and those on the right half
+			double lDist = pairDistance(XL,YL);
+			double rDist = pairDistance(XR,YR);
+			// Combines the points back together to determine whether the closest pair
+			// has one point on the left and one point on the right. 
+			double comDist = Combine (pointsByY, pointsByX[mid], globalDistance);			
+		}
+
+		return globalDistance;	
+	}
+
+
+
+
+
+
+	public static double Combine(XYPoint pointsByY[], XYPoint mid, double lrDist){
+		ArrayList<XYPoint> yStrip = new ArrayList<XYPoint>();
+		double minDistCom = globalDistance;
+
+		// Creates an array list that contains only the points that are within the 
+		// currently globally smallest distance from the midpoint. These are the only
+		// points that it is possible are closest than the closest pair found in the
+		// divide step. 
+		for (int m = 0; m < pointsByY.length; m++){
+			if (Math.abs(mid.x - pointsByY[m].x)<lrDist){
+				yStrip.add(pointsByY[m]);
+			}
+		}
+
+
+		for (int l = 0; l <= yStrip.size() - 2; l++){
+			int p = l+1;
+			// A loop that compares the points in yStrip to each other to see if 
+			// they are closer than the already found closest pair. If they are 
+			// than the global variables are updated to reflect this. 
+			// The conditions imposed on this loop ensure that it runs at most 7 times
+			// which gurantees the asymptotic complexity that we want. 
+			while (p <= yStrip.size() - 1 &&  ((yStrip.get(l).y) - (yStrip.get(p).y)) < lrDist){
+				double tempDist = yStrip.get(l).dist(yStrip.get(p));
+				if (tempDist<minDistCom){
+					minDistCom = tempDist;
+					globalDistance = minDistCom;
+					pointOne = yStrip.get(l);
+					pointTwo = yStrip.get(p);
+					p++;
+				}
+				else{
+					p++;
+				}
+			}
+		}
+		return minDistCom;
+	}
+}
