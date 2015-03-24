@@ -1,9 +1,8 @@
 # Data-Structure-and-Algorithms
-The lab has been implemented according to the pseudocode and is currently passing all the test provided by the auto grader as will as every input I have given it. The Naive algorithm uses comparison plain and simple to find the smallest distance. It compares every set of two points to every other set of two points. 
+The Naive algorithm uses comparison plain and simple to find the smallest distance. It compares every set of two points to every other set of two points. 
 The DC algorithm recursively breaks down the set of points until it gets down to a set size of 2 then compares the distance between those two points to a globally accessible variable that store the smallest distances found by the algorithm thus far. Storing the points associated with that distance is done in a similar manner. Every time the global distance variable is updated, two global XYPoint variables are updates to contain the points associated with the distance. These variables can be updated one of two ways: in the divide step or the combine step. 
 
 
-For Part Three of the lab, there is an attached PDF called Comparing Running Times that contains a graph comparing the running times for the naive and DC algorithms. 
 
 
 When the DC algorithm was run 100 times on different sets of points, the results were as follows:
