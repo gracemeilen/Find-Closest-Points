@@ -1,0 +1,53 @@
+public class ClosestPairNaive {
+
+	public final static double INF = java.lang.Double.POSITIVE_INFINITY;
+	public static XYPoint pointOne; // Tracks one point of the closest distance
+	public static XYPoint pointTwo; // Tracks the other point for the closeset distance
+	public static double globalDist; // tracks the closest distance seen yet by the program as it runs. 
+
+	//
+	// findClosestPair()
+	//
+	// Given a collection of nPoints points, find and ***print***
+	//  * the closest pair of points
+	//  * the distance between them
+	// in the form "(x1, y1) (x2, y2) distance"
+	//
+
+	// INPUTS:
+	//  - points sorted in nondecreasing order by X coordinate
+	//  - points sorted in nondecreasing order by Y coordinate
+	//
+
+	public static void findClosestPair(XYPoint points[])
+	{
+		globalDist = pairDistance(points); // calls the help method to compare all points.
+		System.out.println(pointOne.toString() + "  " + pointTwo.toString()  +  "  " + globalDist);
+	}
+
+
+	public static double pairDistance(XYPoint points[]){
+		int nPoints = points.length;
+		double minDist = Double.POSITIVE_INFINITY;
+		double temp;
+		for ( int j = 0; j<nPoints; j++){ // tracks the first point you're comparing
+			for (int k = j+1; k<nPoints; k++){ // tracks the second point you're comparing
+				temp = points[j].dist(points[k]);
+				if (temp < minDist){  // updates the globally held variables if this distance is the smallest you've seen yet.
+					minDist = temp;
+					if (points[j].isLeftOf(points[k]) ||
+							(points[j].x == points[k].x && points[j].isBelow(points[k]))){
+						pointOne = points[j];
+						pointTwo = points[k];
+					}
+					else{
+						pointOne = points[k];
+						pointTwo = points[j];
+					}
+				}
+			}
+		}
+		return minDist;
+	}
+}
+
